@@ -64,6 +64,14 @@ public class MduBloodBank {
 					System.out.println("Enter valid blood group");
 					newDonorBlood = sc.next();
 				}
+				System.out.println("enter your age");
+				int age = sc.nextInt();
+				if (age > 18 && age <= 50) {
+					donor.setAge(age);
+				} else {
+					System.out.println("please enter valid age");
+					age = sc.nextInt();
+				}
 				System.out.println("Do you consume alcohol within 24 hours answer yes or no ");
 				String hasConsumed = sc.next();
 				if (hasConsumed.equalsIgnoreCase("yes")) {
@@ -71,6 +79,7 @@ public class MduBloodBank {
 				} else if (hasConsumed.equalsIgnoreCase("no")) {
 					System.out.println(donor.getDonorName() + " thank your for donating " + donor.getBloodGroup()
 							+ " blood" + " your id is : " + "MDU" + donor.getDonorId());
+					 dbOperation.readWrite(donor.getDonorName(),donor.getAge(),donor.getBloodGroup());
 				} else {
 					System.out.println("Please enter valid answer");
 					hasConsumed = sc.next();
@@ -124,7 +133,7 @@ public class MduBloodBank {
 						
 					bloodBank.donateBlood(donor.getDonorName());
 					
-					 dbOperation.readWrite(donor.getDonorId(),donor.getDonorName(),donor.getAge(),donor.getBloodGroup());
+					 dbOperation.readWrite(donor.getDonorName(),donor.getAge(),donor.getBloodGroup());
 					}else {
 						System.out.println("Please enter valid answer");
 						donatedBefore = sc.next();

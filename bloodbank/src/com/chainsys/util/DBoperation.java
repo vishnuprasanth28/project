@@ -6,19 +6,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DBoperation {
-	 public static void readWrite(int id, String name,int age , String bloodGrp) throws SQLException, ClassNotFoundException {
+	 public static void readWrite(String name,int age , String bloodGrp) throws SQLException, ClassNotFoundException {
 	    	
 	    	Connection connection = ConnectionUtil.getConnection();
 	        
-	        String storeDetails="insert into blood_bank values(?,?,?,?)";
+	        String storeDetails="insert into blood_bank(donor_name, age, blood_group) values(?,?,?)";
 	        PreparedStatement prepareStatement = connection.prepareStatement(storeDetails);
-	        prepareStatement.setInt(1, id);
-	        prepareStatement.setString(2, name);
-	        prepareStatement.setInt(3, age);
-	        prepareStatement.setString(4, bloodGrp);
-	        int rows = 	prepareStatement.executeUpdate();
+	        prepareStatement.setString(1, name);
+	        prepareStatement.setInt(2, age);
+	        prepareStatement.setString(3, bloodGrp);
+        int rows = 	prepareStatement.executeUpdate();
 			 System.out.println("Added : "+rows);
-		      
 		    
 	    
 	}
@@ -38,7 +36,8 @@ public class DBoperation {
 	    	 }
 				
 				 String updateStock ="update blood_stock set unit= '"+totalUnit+" ' where blood_grp= "+bloodGrp;
-				 prepareStatement.setInt(1, totalUnit); prepareStatement.setString(2, bloodGrp); 
+				  
+				 
 				 prepareStatement = connection.prepareStatement(updateStock);
 				 
 				 int row= prepareStatement.executeUpdate();
