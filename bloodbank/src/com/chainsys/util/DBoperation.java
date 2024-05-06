@@ -4,9 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
-public class DBoperation {
-	 public static void readWrite(String name,int age , String bloodGrp) throws SQLException, ClassNotFoundException {
+import com.chainsys.DAO.BloodBankFunctions;
+
+public class DBoperation implements BloodBankFunctions {
+	@Override
+	 public void readWrite(String name,int age , String bloodGrp) throws SQLException, ClassNotFoundException {
 	    	
 	    	Connection connection = ConnectionUtil.getConnection();
 	        
@@ -20,8 +24,8 @@ public class DBoperation {
 		    
 	    
 	}
-	   
-	    public static void updateStock(int bloodUnit,String bloodGrp) throws ClassNotFoundException, SQLException {
+	   @Override
+	    public void updateStock(int bloodUnit,String bloodGrp) throws ClassNotFoundException, SQLException {
 	    	 int Unit ,totalUnit=0;
 	    	Connection connection = ConnectionUtil.getConnection();
 	    	System.out.println(bloodGrp);
@@ -35,7 +39,7 @@ public class DBoperation {
 	        	  System.out.println(totalUnit);
 	    	 }
 				
-				 String updateStock ="update blood_stock set unit= '"+totalUnit+" ' where blood_grp= "+bloodGrp;
+				 String updateStock ="update blood_stock set unit= "+totalUnit+"  where blood_grp= '"+bloodGrp+"';";
 				  
 				 
 				 prepareStatement = connection.prepareStatement(updateStock);
@@ -45,7 +49,8 @@ public class DBoperation {
 				 
 	    	
 	    }
-	    public static void updateUnit(int bloodUnit,String bloodGrp) throws ClassNotFoundException, SQLException {
+	   @Override
+	    public void updateUnit(int bloodUnit,String bloodGrp) throws ClassNotFoundException, SQLException {
 	   	 int Unit ,totalUnit=0;
 	   	Connection connection = ConnectionUtil.getConnection();
 	   	System.out.println(bloodGrp);
@@ -59,7 +64,7 @@ public class DBoperation {
 	       	  System.out.println(totalUnit);
 	   	 }
 				
-				 String updateStock ="update blood_stock set unit= '"+totalUnit+" ' where blood_grp= "+bloodGrp;
+				 String updateStock ="update blood_stock set unit= "+totalUnit+"  where blood_grp= '"+bloodGrp+"';";
 				 prepareStatement.setInt(1, totalUnit); prepareStatement.setString(2, bloodGrp); 
 				 prepareStatement = connection.prepareStatement(updateStock);
 				 
@@ -67,6 +72,55 @@ public class DBoperation {
 				  System.out.println("Stock updated : "+row);
 				 
 	   	
+	   }
+	   @Override
+	   public boolean donorLogin(int id,String name) throws ClassNotFoundException, SQLException {
+		   Connection connection = ConnectionUtil.getConnection();
+		   
+		   ArrayList<String> user =new ArrayList<>();
+		   
+		   String checkUser="select donor_name from blood_bank where id =?";   
+		   	PreparedStatement prepareStatement = connection.prepareStatement(checkUser);
+			prepareStatement.setInt(1, id);
+		   	 ResultSet resultSet = prepareStatement.executeQuery();
+		     
+		        while (resultSet.next()) {
+		            String donorName = resultSet.getString("donor_name");
+		            user.add(donorName);
+		        }
+		        if (user.contains(name)) {
+		            System.out.println("welcome "+name);
+		            return true;
+		            
+		        } else 
+		             System.out.println("please register us new donor");
+		        
+		        	return false;
+		
+		   
+	   }
+	   public boolean adminLogin(String name, int passWord) throws ClassNotFoundException, SQLException {
+		   Connection connection = ConnectionUtil.getConnection();
+		   String adminName=null;
+		   String checkUser="select admin from blood_stock where password =?";   
+		   	PreparedStatement prepareStatement = connection.prepareStatement(checkUser);
+			prepareStatement.setInt(1, passWord);
+		   	 ResultSet resultSet = prepareStatement.executeQuery();
+		   	 while(resultSet.next()) {
+		   		  adminName =resultSet.getString("admin");
+		   		 
+		   	 }
+		   	 if(adminName.equalsIgnoreCase(name)) {
+		   		 System.out.println("welcome " +name);
+		   		 return true;
+		   	 }else {
+		   		 System.out.println("Please tyr again...");
+		   	 }
+		   
+		   
+		   
+		return false;
+		   
 	   }
 
 }

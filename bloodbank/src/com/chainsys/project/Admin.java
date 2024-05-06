@@ -11,25 +11,7 @@ import com.chainsys.util.DBoperation;
 public class Admin {
 	DBoperation dbOperation = new DBoperation();
 
-	List<String> bloodStock = new ArrayList<>();
-
-	public List<String> getBloodStock() {
-		return bloodStock;
-	}
-
-	public void setBloodStock(List<String> bloodStock) {
-		this.bloodStock = bloodStock;
-	}
-
-	public void adminLogin(String name, String password) {
-
-		if (name.equals("vishnu") && password.equals("1234")) {
-			System.out.println("Login success");
-		} else {
-			System.out.println("enter valid data");
-
-		}
-	}
+	
 
 	public void addBloodStock() throws ClassNotFoundException, SQLException {
 		Scanner sc = new Scanner(System.in);
@@ -67,4 +49,9 @@ public class Admin {
 		System.out.println("Stock Updated");
 
 	}
+		public static int generateId() {
+			int id =(int) (Math.random() * 10);
+			return id;
+		}
+	
 }

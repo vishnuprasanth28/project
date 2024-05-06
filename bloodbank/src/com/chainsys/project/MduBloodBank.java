@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import com.chainsys.DAO.MduBloodBankCamp;
+import com.chainsys.DAO.BloodBank;
+
 import com.chainsys.bloodbank.Donor;
 import com.chainsys.bloodbank.Person;
 import com.chainsys.bloodbank.Recipient;
@@ -17,7 +18,7 @@ public class MduBloodBank {
 	{
 		
 		DBoperation dbOperation = new DBoperation();
-		MduBloodBankCamp mduCamp = new MduBloodBankCamp();
+		BloodBank mduBranch = new BloodBank();
 		
 			Scanner sc = new Scanner(System.in);
 		
@@ -42,7 +43,7 @@ public class MduBloodBank {
 			System.out.println("Are you new donor");// Ask user are they donating for first time
 			String isNewDonor = sc.next();
 			if (isNewDonor.equalsIgnoreCase("yes")) {
-				donor.setDonorId(NewDonor.generateId());// generating ID for new donors
+				donor.setDonorId(Admin.generateId());// generating ID for new donors
 				System.out.println("Enter your name");
 				String newDonorName = sc.next();
 				while (true) {
@@ -120,6 +121,7 @@ public class MduBloodBank {
 					System.out.println("please enter valid blood group");
 					bloodgrp = sc.next();
 				}
+				if(dbOperation.donorLogin(donor.getDonorId(), donor.getDonorName())) {
 				System.out.println("Do you consume alcohol within 24 hours answer yes or no ");
 				String hasConsumed = sc.next();
 				if (hasConsumed.equalsIgnoreCase("yes")) {
@@ -133,7 +135,7 @@ public class MduBloodBank {
 						
 					bloodBank.donateBlood(donor.getDonorName());
 					
-					 dbOperation.readWrite(donor.getDonorName(),donor.getAge(),donor.getBloodGroup());
+					 //dbOperation.readWrite(donor.getDonorName(),donor.getAge(),donor.getBloodGroup());
 					}else {
 						System.out.println("Please enter valid answer");
 						donatedBefore = sc.next();
@@ -143,6 +145,10 @@ public class MduBloodBank {
 					hasConsumed = sc.next();
 				}
 
+			}
+				else {
+					System.out.println("Kindly register...");
+				}
 			}
 		} else {
 			// ask name of recipient
@@ -203,19 +209,19 @@ public class MduBloodBank {
 
 		}
 		System.out.println("     __________________________________   ");
-		MduBloodBankCamp.bloodBankCamp();
+		mduBranch.bloodBankCamp();
 		System.out.println("Do you want organise blood camp in your location ");
 		System.out.println("choice \r \n" + "y or n");
 		char needCamp = sc.next().toLowerCase().charAt(0);
 		if (needCamp == 'y' || needCamp == 'n') {
 			switch (needCamp) {
 			case 'y':
-				mduCamp.organiseCamp();
+				mduBranch.organiseCamp();
 				break;
 
 			case 'n':
 				System.out.println(" Encourage blood donation ");
-				mduCamp.awarness();
+				mduBranch.awarness();
 				break;
 			}
 		} else {
