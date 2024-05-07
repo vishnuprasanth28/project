@@ -21,10 +21,10 @@ public Donor(int donorId, String donorName, String bloodGroup, String contact, b
 
 
 @Override
-	public String toString() {
-		return "Donor [donorId=" + donorId + ", donorName=" + donorName + ", bloodGroup=" + bloodGroup + ", contact="
-				+ contact + ", alcoholConsumed=" + alcoholConsumed + ", age=" + age + "]";
-	}
+public String toString() {
+	return "Donor [donorId=" + donorId + ", donorName=" + donorName + ", bloodGroup=" + bloodGroup + ", contact="
+			+ contact + ", alcoholConsumed=" + alcoholConsumed + ", age=" + age + ", location=" + location + "]";
+}
 
 
 
@@ -64,6 +64,33 @@ int donorId;
    String contact;
    boolean alcoholConsumed;
    int age;
+   String location;
+public Donor(int donorId, String donorName, String bloodGroup, String contact, boolean alcoholConsumed, int age,
+		String location) {
+	super();
+	this.donorId = donorId;
+	this.donorName = donorName;
+	this.bloodGroup = bloodGroup;
+	this.contact = contact;
+	this.alcoholConsumed = alcoholConsumed;
+	this.age = age;
+	this.location = location;
+}
+
+
+
+public String getLocation() {
+	return location;
+}
+
+
+
+public void setLocation(String location) {
+	this.location = location;
+}
+
+
+
 public int getAge() {
 	return age;
 }

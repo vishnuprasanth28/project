@@ -6,40 +6,45 @@ import java.util.Scanner;
 import com.chainsys.util.DBoperation;
 
 public class MduBranch {
-	public static void main(String[]args) throws ClassNotFoundException, SQLException {
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 //		MduBloodBank mduBloodBank = new MduBloodBank();
 		DBoperation dbOperation = new DBoperation();
 		Admin admin = new Admin();
 		Scanner sc = new Scanner(System.in);
+		char isAdmin = 'n';
 		System.out.println("  Welcome to MDU Blood Bank  \n");
-		System.out.println("Login as admin answer y/n ");
-		char isAdmin = sc.next().toLowerCase().charAt(0);
-		switch(isAdmin) {
-		case 'y':System.out.println("Enter user name");
-					String userName = sc.next();
-					
-					System.out.println("Enter your password");
-					int password =sc.nextInt();
-					if(dbOperation.adminLogin(userName, password)) {
-						System.out.println("Do you want add blood stock (yes / no)");
-						String addStock =sc.next();
-						if(addStock.equalsIgnoreCase("yes")){
-							
-							admin.addBloodStock();
-						}else {
-							System.out.println(" Signed out ");
-						}
-						
-					}else {
-						System.out.println("Thank you");
+		System.out.println(" Press(y) for login as Admin --- Others please press (n)  : ");
+		while (true) {
+
+			isAdmin = sc.next().toLowerCase().charAt(0);
+
+			switch (isAdmin) {
+			case 'y':
+				System.out.println("Enter user name");
+				String userName = sc.next();
+
+				System.out.println("Enter your password");
+				int password = sc.nextInt();
+				if (dbOperation.adminLogin(userName, password)) {
+					System.out.println("Do you want add blood stock (yes / no)");
+					String addStock = sc.next();
+					if (addStock.equalsIgnoreCase("yes")) {
+
+						admin.addBloodStock();
+					} else {
+						System.out.println(" Signed out ");
 					}
-					
-					break;
-		case 'n':
-			MduBloodBank.function();
-			break;
+
+				} else {
+					System.out.println("Thank you");
+				}
+
+				break;
+			case 'n':
+				MduBloodBank.function();
+				break;
+			}
+
 		}
-		
-		
 	}
 }

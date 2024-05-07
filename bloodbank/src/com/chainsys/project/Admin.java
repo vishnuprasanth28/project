@@ -11,8 +11,6 @@ import com.chainsys.util.DBoperation;
 public class Admin {
 	DBoperation dbOperation = new DBoperation();
 
-	
-
 	public void addBloodStock() throws ClassNotFoundException, SQLException {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Do you want add blood stock Press (y) or press any key :");
@@ -24,7 +22,7 @@ public class Admin {
 				System.out.println("Enter blood group in Units ");
 
 				int unit = sc.nextInt();
-				
+
 				if (unit > 0) {
 					dbOperation.updateStock(unit, bloodType);
 					break;
@@ -32,7 +30,6 @@ public class Admin {
 					System.out.println(" Please enter valid blood unit ");
 					unit = sc.nextInt();
 				}
-				
 
 			} else {
 				System.out.println(" Please enter valid blood group ");
@@ -40,7 +37,6 @@ public class Admin {
 
 			}
 
-			
 			System.out.println("Do you want add more (y) or press any key :");
 			addStock = sc.next().toLowerCase();
 			// if(addStock)
@@ -49,9 +45,10 @@ public class Admin {
 		System.out.println("Stock Updated");
 
 	}
-		public static int generateId() {
-			int id =(int) (Math.random() * 10);
-			return id;
-		}
-	
+
+	public static int generateId() {
+		int id = (int) (Math.random() * 10);
+		return id;
+	}
+
 }

@@ -7,21 +7,21 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import com.chainsys.DAO.BloodBank;
-
+import com.chainsys.DAO.InvalidAgeException;
 import com.chainsys.bloodbank.Donor;
 import com.chainsys.bloodbank.Person;
 import com.chainsys.bloodbank.Recipient;
 import com.chainsys.util.DBoperation;
 
 public class MduBloodBank {
-	public static void function() throws ClassNotFoundException, SQLException
-	{
-		
+	public static void function() throws ClassNotFoundException, SQLException {
+
 		DBoperation dbOperation = new DBoperation();
 		BloodBank mduBranch = new BloodBank();
-		
-			Scanner sc = new Scanner(System.in);
-		
+		TestAge testAge =new TestAge();
+
+		Scanner sc = new Scanner(System.in);
+
 		BloodBank bloodBank = new BloodBank();
 		Donor donor = new Donor();
 		Recipient recipient = new Recipient();
@@ -33,8 +33,7 @@ public class MduBloodBank {
 		donorList.add(new Person("vishnu", "A+", "9787897345", "madurai"));
 		donorList.add(new Person("kumar", "AB+", "9787997345", "trichy"));
 		donorList.add(new Person("kasi", "A-", "9787897045", "madurai"));
-		
-		
+
 		System.out.println("For donate blood type-yes or type-no for receive blood");// ask user whether they want
 																						// donate or receive blood
 
@@ -43,7 +42,7 @@ public class MduBloodBank {
 			System.out.println("Are you new donor");// Ask user are they donating for first time
 			String isNewDonor = sc.next();
 			if (isNewDonor.equalsIgnoreCase("yes")) {
-				donor.setDonorId(Admin.generateId());// generating ID for new donors
+
 				System.out.println("Enter your name");
 				String newDonorName = sc.next();
 				while (true) {
@@ -54,6 +53,9 @@ public class MduBloodBank {
 					System.out.println("Enter valid name");
 					newDonorName = sc.next();
 				}
+
+				donor.setDonorId(Admin.generateId());// generating ID for new donors
+
 				System.out.println("enter your blood group");
 				String newDonorBlood = sc.next();
 				while (true) {
@@ -62,17 +64,45 @@ public class MduBloodBank {
 						break;
 
 					}
-					System.out.println("Enter valid blood group");
+					System.out.println("Please enter a valid blood group (A+, B-, AB+, O-, etc.).");
 					newDonorBlood = sc.next();
 				}
+				while(true) {
 				System.out.println("enter your age");
 				int age = sc.nextInt();
-				if (age > 18 && age <= 50) {
-					donor.setAge(age);
-				} else {
-					System.out.println("please enter valid age");
-					age = sc.nextInt();
+//				if (age > 18 && age <= 50) {
+//					donor.setAge(age);
+//				} else {
+//					System.out.println("please enter valid age");
+//					age = sc.nextInt();
+//				}
+				try {
+				testAge.validate(age);
+				break;
+				
+				}catch(InvalidAgeException e) {
+					System.out.println(e);
 				}
+				}
+				
+				System.out.println("Enter your mobile number");
+				String mobileNumber = sc.next();
+
+				while (!mobileNumber.matches("[6789]{1}[0-9]{9}")) {
+					System.err.println("Please enter a valid 10-digit mobile number.");
+					mobileNumber = sc.next();
+				}
+				donor.setContact(mobileNumber);
+
+				System.out.println("Enter your city");
+				String location = sc.next();
+
+				if (!location.matches("^[a-zA-Z\\s]+$")) {
+					System.out.println("Please enter a valid city name (alphabetic characters and spaces only).");
+					location = sc.next();
+				}
+				donor.setLocation(location);
+
 				System.out.println("Do you consume alcohol within 24 hours answer yes or no ");
 				String hasConsumed = sc.next();
 				if (hasConsumed.equalsIgnoreCase("yes")) {
@@ -80,7 +110,7 @@ public class MduBloodBank {
 				} else if (hasConsumed.equalsIgnoreCase("no")) {
 					System.out.println(donor.getDonorName() + " thank your for donating " + donor.getBloodGroup()
 							+ " blood" + " your id is : " + "MDU" + donor.getDonorId());
-					 dbOperation.readWrite(donor.getDonorName(),donor.getAge(),donor.getBloodGroup());
+					dbOperation.addDonors(donor);
 				} else {
 					System.out.println("Please enter valid answer");
 					hasConsumed = sc.next();
@@ -111,6 +141,15 @@ public class MduBloodBank {
 					System.out.println("please enter valid age");
 					age = sc.nextInt();
 				}
+				System.out.println("Enter your mobile number");
+				String mobileNumber = sc.next();
+
+				if (!mobileNumber.matches("\\d{10}")) {
+					System.out.println("Please enter a valid 10-digit mobile number.");
+					mobileNumber = sc.next();
+				}
+				donor.setContact(mobileNumber);
+
 				System.out.println("enter your blood group");
 				String bloodgrp = sc.next();
 				if (Pattern.matches("^(A|B|AB|O)[+-]$", bloodgrp)) {
@@ -118,35 +157,43 @@ public class MduBloodBank {
 					bloodList.add(donor.getBloodGroup());
 
 				} else {
-					System.out.println("please enter valid blood group");
+					System.out.println("Please enter a valid blood group (A+, B-, AB+, O-, etc.).");
 					bloodgrp = sc.next();
 				}
-				if(dbOperation.donorLogin(donor.getDonorId(), donor.getDonorName())) {
-				System.out.println("Do you consume alcohol within 24 hours answer yes or no ");
-				String hasConsumed = sc.next();
-				if (hasConsumed.equalsIgnoreCase("yes")) {
-					System.out.println("you are not allowed donate blood");
-				} else if (hasConsumed.equalsIgnoreCase("no")) {
-					System.out.println("are you donated blood before 90 days: yes/no ");
-					String donatedBefore = sc.next();
-					if (donatedBefore.equalsIgnoreCase("yes")) {
-						System.out.println(" Please donate blood after completing 90 days from previous blood donation day");
-					}else if(donatedBefore.equalsIgnoreCase("no")) {
-						
-					bloodBank.donateBlood(donor.getDonorName());
-					
-					 //dbOperation.readWrite(donor.getDonorName(),donor.getAge(),donor.getBloodGroup());
-					}else {
-						System.out.println("Please enter valid answer");
-						donatedBefore = sc.next();
-					}
-				} else {
-					System.out.println("Please enter valid answer");
-					hasConsumed = sc.next();
+				System.out.println("Enter your city");
+				String location = sc.next();
+
+				if (!location.matches("^[a-zA-Z\\s]+$")) {
+					System.out.println("Please enter a valid city name (alphabetic characters and spaces only).");
+					location = sc.next();
 				}
 
-			}
-				else {
+				if (dbOperation.donorLogin(donor.getDonorId(), donor.getDonorName())) {
+					System.out.println("Do you consume alcohol within 24 hours answer yes or no ");
+					String hasConsumed = sc.next();
+					if (hasConsumed.equalsIgnoreCase("yes")) {
+						System.out.println("you are not allowed donate blood");
+					} else if (hasConsumed.equalsIgnoreCase("no")) {
+						System.out.println("are you donated blood before 90 days: yes/no ");
+						String donatedBefore = sc.next();
+						if (donatedBefore.equalsIgnoreCase("yes")) {
+							System.out.println(
+									" Please donate blood after completing 90 days from previous blood donation day");
+						} else if (donatedBefore.equalsIgnoreCase("no")) {
+
+							bloodBank.donateBlood(donor.getDonorName());
+
+							// dbOperation.readWrite(donor.getDonorName(),donor.getAge(),donor.getBloodGroup());
+						} else {
+							System.out.println("Please enter valid answer");
+							donatedBefore = sc.next();
+						}
+					} else {
+						System.out.println("Please enter valid answer");
+						hasConsumed = sc.next();
+					}
+
+				} else {
 					System.out.println("Kindly register...");
 				}
 			}
@@ -166,7 +213,7 @@ public class MduBloodBank {
 				recipient.setBloodGroupNeed(bloodgroup);
 
 			} else {
-				System.out.println("please enter valid blood group");
+				System.out.println("Please enter a valid blood group (A+, B-, AB+, O-, etc.).");
 				bloodgroup = sc.next();
 			}
 			for (String s : bloodList) {
@@ -178,9 +225,9 @@ public class MduBloodBank {
 					if (bloodUnit > 0 && bloodUnit < 50)// if available calculating price per unit
 					{
 						Double payableAmount = (double) (bloodUnit * 100);
-						
+
 						System.out.println("you have to pay " + payableAmount + " for " + bloodUnit + " unit of blood");
-						 dbOperation.updateUnit(bloodUnit, bloodgroup);
+						dbOperation.updateUnit(bloodUnit, bloodgroup);
 					} else {
 						System.out.println("Please enter valid unit");
 						bloodUnit = sc.nextInt();
@@ -193,14 +240,16 @@ public class MduBloodBank {
 			System.out.println("Do you want to contact donor in person ");
 			String contactDonor = sc.next();
 			if (contactDonor.equalsIgnoreCase("yes")) {
-				for (Person donors : donorList) {
-					if (donors.getBloodGroup().equals(recipient.getBloodGroupNeed())) {
-						System.out.println("Name: " + donors.getPersonName());
-						System.out.println("Blood Type: " + donors.getBloodGroup());
-						System.out.println("Phone Number: " + donors.getContact());
-						System.out.println("Location: " + donors.getLocation());
-					}
-				}
+				/*
+				 * for (Person donors : donorList) { if
+				 * (donors.getBloodGroup().equals(recipient.getBloodGroupNeed())) {
+				 * System.out.println("Name: " + donors.getPersonName());
+				 * System.out.println("Blood Type: " + donors.getBloodGroup());
+				 * System.out.println("Phone Number: " + donors.getContact());
+				 * System.out.println("Location: " + donors.getLocation()); }
+				 */
+				// }
+				dbOperation.contactDonor(recipient.getBloodGroupNeed());
 
 			} else {
 				System.out.println("Please enter valid answer");
@@ -230,5 +279,19 @@ public class MduBloodBank {
 		}
 		sc.close();
 	}
-	
+
+}
+class TestAge
+{  
+  
+    
+     void validate (int age) throws InvalidAgeException{    
+       if(age < 18){  
+   
+        throw new InvalidAgeException("Age Below 18 can't donate blood");    
+    }  
+       else {   
+        System.out.println("Eligible to donate blood");   
+        }   
+     }    
 }
