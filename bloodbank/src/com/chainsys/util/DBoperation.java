@@ -83,7 +83,7 @@ public class DBoperation implements BloodBankFunctions {
 
 		ArrayList<String> user = new ArrayList<>();
 
-		String checkUser = "select donor_name from blood_bank where id =?";
+		String checkUser = "select donor_name from donor_list where id =?";
 		PreparedStatement prepareStatement = connection.prepareStatement(checkUser);
 		prepareStatement.setInt(1, id);
 		ResultSet resultSet = prepareStatement.executeQuery();
@@ -106,22 +106,22 @@ public class DBoperation implements BloodBankFunctions {
 	public boolean adminLogin(String name, int passWord) throws ClassNotFoundException, SQLException {
 		Connection connection = ConnectionUtil.getConnection();
 		String adminName = null;
-		String checkUser = "select admin from blood_stock where password =?";
+		String checkUser = "select admin from blood_stock where admin=? and password =?";
 		PreparedStatement prepareStatement = connection.prepareStatement(checkUser);
-		prepareStatement.setInt(1, passWord);
+		prepareStatement.setString(1, name);
+		prepareStatement.setInt(2, passWord);
 		ResultSet resultSet = prepareStatement.executeQuery();
-		while (resultSet.next()) {
-			adminName = resultSet.getString("admin");
-
-		}
-		if (adminName.equalsIgnoreCase(name)) {
+		
+		if (!resultSet.next()) {
+			System.out.println("Please register");
+			return false;
+			
+		} else {
 			System.out.println("welcome " + name);
 			return true;
-		} else {
-			System.out.println("Please tyr again...");
 		}
 
-		return false;
+		
 
 	}
 	public void contactDonor(String bloodGrp) throws ClassNotFoundException, SQLException {
