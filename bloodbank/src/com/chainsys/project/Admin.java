@@ -12,39 +12,36 @@ public class Admin {
 	DBoperation dbOperation = new DBoperation();
 
 	public void addBloodStock() throws ClassNotFoundException, SQLException {
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Do you want add blood stock Press (y) or press any key :");
-		String addStock = sc.next().toLowerCase();
-		while (addStock.equals("y")) {
-			System.out.println("Enter blood group :");
-			String bloodType = sc.next();
-			if (bloodType.matches("^(A|B|AB|O)[+-]$")) {
-				System.out.println("Enter blood group in Units ");
+	    Scanner sc = new Scanner(System.in);
+	    String addStock;
 
-				int unit = sc.nextInt();
+	    do {
+	        System.out.println("Press (Y) to add Stock");
+	        addStock = sc.next().toLowerCase();
 
-				if (unit > 0) {
-					dbOperation.updateStock(unit, bloodType);
-					break;
-				} else {
-					System.out.println(" Please enter valid blood unit ");
-					unit = sc.nextInt();
-				}
+	        if (addStock.equals("y")) {
+	            System.out.println("Enter blood group :");
+	            String bloodType = sc.next();
+	            if (bloodType.matches("^(A|B|AB|O)[+-]$")) {
+	                System.out.println("Enter blood group in Units ");
+	                int unit = sc.nextInt();
+	                if (unit > 0) {
+	                    dbOperation.updateStock(unit, bloodType);
+	                } else {
+	                    System.out.println(" Please enter valid blood unit ");
+	                }
+	            } else {
+	                System.out.println(" Please enter valid blood group ");
+	            }
+	        } else {
+	            System.out.println("Invalid input. Exiting...");
+	        }
 
-			} else {
-				System.out.println(" Please enter valid blood group ");
-				addStock = sc.next().toLowerCase();
+	    } while (addStock.equals("y"));
 
-			}
-
-			System.out.println("Do you want add more (y) or press any key :");
-			addStock = sc.next().toLowerCase();
-			// if(addStock)
-
-		}
-		System.out.println("Stock Updated");
-
+	    System.out.println("Stock Updated");
 	}
+
 
 	public static int generateId() {
 		int id = (int) (Math.random() * 10);

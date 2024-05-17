@@ -1,6 +1,6 @@
-package com.chainsys.project;
+package com.chainsys.DAO;
 
-public class BloodBank  {
+public class BloodBank   {
 	
 	public void donateBlood(String donorName) {
 		System.out.println(donorName+" thanks for donating blood");
@@ -22,5 +22,21 @@ public class BloodBank  {
 		System.out.println(recipientName+" thanks for reaching out");
 		
 	}
+	
+	public void bloodBankCamp() {
+		System.out.println("  Blood donation camp has been organised on 20/5/2024 at madurai");
+		System.out.println();
+		System.out.println(" Save life by donating blood ");
+	}
+	
+	public void organiseCamp() {
+		System.out.println("Kindly contact our office at madurai for further Information ");
+	}
+	
+	public void awarness() {
+		System.out.println("  Government Hospitals intiated awarnress program for blood donation ");
+		
+	}
 
+	
 }

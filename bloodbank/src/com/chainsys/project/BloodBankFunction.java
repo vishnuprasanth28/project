@@ -3,6 +3,7 @@ package com.chainsys.project;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -13,11 +14,11 @@ import com.chainsys.bloodbank.Person;
 import com.chainsys.bloodbank.Recipient;
 import com.chainsys.util.DBoperation;
 
-public class MduBloodBank {
+public class BloodBankFunction {
 	public static void function() throws ClassNotFoundException, SQLException {
 
 		DBoperation dbOperation = new DBoperation();
-		BloodBank mduBranch = new BloodBank();
+		
 		TestAge testAge = new TestAge();
 
 		Scanner sc = new Scanner(System.in);
@@ -52,9 +53,9 @@ public class MduBloodBank {
 				while (!Validation.validateName(newDonorName)) {
 					System.out.println("Enter valid name");
 					newDonorName = sc.next();
-					donor.setDonorName(newDonorName);
+					
 
-				}
+				}donor.setDonorName(newDonorName);
 
 				donor.setDonorId(Admin.generateId());// generating ID for new donors
 
@@ -64,9 +65,10 @@ public class MduBloodBank {
 				while (!Validation.validateBlood(newDonorBlood)) {
 					System.out.println("Please enter a valid blood group (A+, B-, AB+, O-, etc.).");
 					newDonorBlood = sc.next();
-					donor.setBloodGroup(newDonorBlood);
+					
 
-				}
+				}donor.setBloodGroup(newDonorBlood);
+				
 				while (true) {
 					System.out.println("enter your age");
 					int age = sc.nextInt();
@@ -138,9 +140,10 @@ public class MduBloodBank {
 				while (!Validation.validateName(name)) {
 					System.out.println("Enter valid name");
 					name = sc.next();
-					donor.setDonorName(name);
+					
 
-				}
+				}	donor.setDonorName(name);
+				
 				System.out.println("enter your age");
 				int age = sc.nextInt();
 				if (age > 18 && age <= 50) {
@@ -176,7 +179,7 @@ public class MduBloodBank {
 					System.out.println("Please enter a valid city name (alphabetic characters and spaces only).");
 					location = sc.next();
 				}
-
+				
 				if (dbOperation.donorLogin(donor.getDonorId(), donor.getDonorName())) {
 					System.out.println("Do you consume alcohol within 24 hours answer yes or no ");
 					String hasConsumed = sc.next();
@@ -221,65 +224,68 @@ public class MduBloodBank {
 			while (!Validation.validateBlood(bloodgroup)) {
 				System.out.println("Please enter a valid blood group (A+, B-, AB+, O-, etc.).");
 				bloodgroup = sc.next();
-				recipient.setBloodGroupNeed(bloodgroup);
 
 			}
 			recipient.setBloodGroupNeed(bloodgroup);
+			boolean bloodGroupAvailable = false;
+
 			for (String s : bloodList) {
-				if (s.equalsIgnoreCase(recipient.getBloodGroupNeed()))// checking for blood group availability
-				{
-					System.out.println("Blood group you need is available");
-					System.out.println("please mention how many units you need ");
-					int bloodUnit = sc.nextInt();
-					if (bloodUnit > 0 && bloodUnit < 50)// if available calculating price per unit
-					{
-						Double payableAmount = (double) (bloodUnit * 100);
-
-						System.out.println("you have to pay " + payableAmount + " for " + bloodUnit + " unit of blood");
-						dbOperation.updateUnit(bloodUnit, bloodgroup);
-					} else {
-						System.out.println("Please enter valid unit");
-						bloodUnit = sc.nextInt();
-					}
-
-				}
-
+			    if (s.equalsIgnoreCase(recipient.getBloodGroupNeed())) {
+			        System.out.println("Blood group you need is available.");
+			        bloodGroupAvailable = true;
+			        System.out.println("Please mention how many units you need ");
+			        int bloodUnit = sc.nextInt();
+			        if (bloodUnit > 0 && bloodUnit < 50) {
+			            double payableAmount = bloodUnit * 100.0;
+			            System.out.println("You have to pay " + payableAmount + " for " + bloodUnit + " unit(s) of blood.");
+			            dbOperation.updateUnit(bloodUnit, bloodgroup);
+			        } else {
+			            System.out.println("Please enter a valid unit.");
+			        }
+			        break; // No need to continue checking blood groups
+			    }
 			}
-			BloodBank.receiveBlood(recieverName);// showing list of donors for recipient
-			System.out.println("Do you want to contact donor in person ");
+
+			if (!bloodGroupAvailable) {
+			    System.out.println("Blood group you need is not available.");
+
+			System.out.println("Do you want to contact a donor in person?");
 			String contactDonor = sc.next();
 			if (contactDonor.equalsIgnoreCase("yes")) {
-
 				dbOperation.contactDonor(recipient.getBloodGroupNeed());
-
 			} else {
-				System.out.println("Please enter valid answer");
-				contactDonor = sc.next();
+			    System.out.println("Please enter a valid answer.");
 			}
-
+			}
 		}
-		System.out.println("     __________________________________   ");
-		mduBranch.bloodBankCamp();
+		System.out.println("  ==========================================================  ");
+		bloodBank.bloodBankCamp();
 		System.out.println("Do you want organise blood camp in your location ");
+		try {
 		System.out.println("choice \r \n" + "y or n");
 		char needCamp = sc.next().toLowerCase().charAt(0);
 		if (needCamp == 'y' || needCamp == 'n') {
 			switch (needCamp) {
 			case 'y':
-				mduBranch.organiseCamp();
+				bloodBank.organiseCamp();
 				break;
 
 			case 'n':
 				System.out.println(" Encourage blood donation ");
-				mduBranch.awarness();
+				bloodBank.awarness();
 				break;
 			}
 		} else {
 			System.out.println("Please enter valid data");
 			needCamp = sc.next().toLowerCase().charAt(0);
 		}
+		}catch(NoSuchElementException e)
+		{
+			System.out.println(e);
+		}
 		sc.close();
 	}
+	
 
 }
 

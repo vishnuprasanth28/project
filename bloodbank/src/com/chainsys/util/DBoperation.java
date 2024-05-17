@@ -68,8 +68,10 @@ public class DBoperation implements BloodBankFunctions {
 		}
 
 		String updateStock = "update blood_stock set unit= " + totalUnit + "  where blood_grp= '" + bloodGrp + "';";
-		prepareStatement.setInt(1, totalUnit);
-		prepareStatement.setString(2, bloodGrp);
+		/*
+		 * prepareStatement.setInt(1, totalUnit); prepareStatement.setString(2,
+		 * bloodGrp);
+		 */
 		prepareStatement = connection.prepareStatement(updateStock);
 
 		int row = prepareStatement.executeUpdate();
@@ -82,17 +84,17 @@ public class DBoperation implements BloodBankFunctions {
 		Connection connection = ConnectionUtil.getConnection();
 
 		ArrayList<String> user = new ArrayList<>();
-
+		
 		String checkUser = "select donor_name from donor_list where id =?";
 		PreparedStatement prepareStatement = connection.prepareStatement(checkUser);
 		prepareStatement.setInt(1, id);
 		ResultSet resultSet = prepareStatement.executeQuery();
-
+		String donorName = null;
 		while (resultSet.next()) {
-			String donorName = resultSet.getString("donor_name");
+			donorName = resultSet.getString("donor_name");
 			user.add(donorName);
 		}
-		if (user.contains(name)) {
+		if (donorName.equals(name)) {
 			System.out.println("welcome " + name);
 			return true;
 
@@ -126,8 +128,8 @@ public class DBoperation implements BloodBankFunctions {
 	}
 	public void contactDonor(String bloodGrp) throws ClassNotFoundException, SQLException {
 		Connection connection = ConnectionUtil.getConnection();
-		String checkUser = "select donor_name,location,mobile from donor_list where blood_group =?";
-		PreparedStatement prepareStatement = connection.prepareStatement(checkUser);
+		String getDonors = "select donor_name,location,mobile from donor_list where blood_group =?";
+		PreparedStatement prepareStatement = connection.prepareStatement(getDonors);
 		prepareStatement.setString(1, bloodGrp);
 		ResultSet resultSet = prepareStatement.executeQuery();
 		ResultSetMetaData rsmd = resultSet.getMetaData();
@@ -140,5 +142,22 @@ public class DBoperation implements BloodBankFunctions {
 			
 		}
 	}
+/*	public void displayDonors(String bloodGrp,String location) throws ClassNotFoundException, SQLException {
+		Connection connection = ConnectionUtil.getConnection();
+		String checkUser = "select donor_name,mobile from donor_list where blood_group=?and location=?";
+		PreparedStatement prepareStatement = connection.prepareStatement(checkUser);
+		prepareStatement.setString(1, bloodGrp);
+		prepareStatement.setString(2, location);
+		ResultSet resultSet = prepareStatement.executeQuery();
+		ResultSetMetaData rsmd = resultSet.getMetaData();
+		while(resultSet.next()) {
+			for(int i=1;i<=rsmd.getColumnCount();i++) {
+	    		  String value =resultSet.getString(i);
+	    		  System.out.print(rsmd.getColumnName(i)+" : "+value+" ");
+	    	  }
+	    	  System.out.println();
+			
+		}*/
+	}
 
-}
+
