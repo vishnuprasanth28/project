@@ -5,10 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
-import com.chainsys.DAO.BloodBankFunctions;
 import com.chainsys.bloodbank.Donor;
+import com.chainsys.dao.BloodBankFunctions;
 
 public class DBoperation implements BloodBankFunctions {
 	@Override
@@ -16,13 +20,15 @@ public class DBoperation implements BloodBankFunctions {
 
 		Connection connection = ConnectionUtil.getConnection();
 
-		String storeDetails = "insert into donor_list(donor_name, age, blood_group, location,mobile) values(?,?,?,?,?)";
+		String storeDetails = "insert into donor_list(donor_name, age, blood_group, location,mobile,donate_date) values(?,?,?,?,?,?)";
 		PreparedStatement prepareStatement = connection.prepareStatement(storeDetails);
 		prepareStatement.setString(1, donor.getDonorName());
 		prepareStatement.setInt(2, donor.getAge());
 		prepareStatement.setString(3, donor.getBloodGroup());
 		prepareStatement.setString(4, donor.getLocation());
 		prepareStatement.setString(5, donor.getContact());
+		prepareStatement.setDate(6, new java.sql.Date( new Date().getTime()));
+		
 		int rows = prepareStatement.executeUpdate();
 		System.out.println("Added : " + rows);
 
@@ -158,6 +164,40 @@ public class DBoperation implements BloodBankFunctions {
 	    	  System.out.println();
 			
 		}*/
+	
+	public boolean checkEligability (int id) throws ClassNotFoundException, SQLException {
+		Connection connection = ConnectionUtil.getConnection();
+		long daysInStock=0;
+		String getdate = "select donate_date from donor_list where id=?";
+		PreparedStatement prepareStatement = connection.prepareStatement(getdate);
+		prepareStatement.setInt(1, id);
+		ResultSet resultSet = prepareStatement.executeQuery();
+		ResultSetMetaData rsmd = resultSet.getMetaData();
+		while(resultSet.next()) {
+			Date donatedDate = resultSet.getDate("donate_date");
+            
+            Date currentDate = new Date();
+            long milliDif = currentDate.getTime() - donatedDate.getTime();
+            daysInStock = TimeUnit.DAYS.convert(milliDif,TimeUnit.MILLISECONDS);
+            System.out.println("you have donated "+daysInStock+" days before");
+		}if(daysInStock>90) {
+			return true;
+		}else {
+			return false;
+		}
+		
+		
+		
+	}
+	public void updateDate(int id) throws ClassNotFoundException, SQLException {
+		Connection connection = ConnectionUtil.getConnection();
+		String getdate = " update donor_list set  donate_date=? where id=?;";
+		PreparedStatement prepareStatement = connection.prepareStatement(getdate);
+		prepareStatement.setDate(1, new java.sql.Date( new Date().getTime()));
+		prepareStatement.setInt(2, id);
+		int row = prepareStatement.executeUpdate();
+		System.out.println(" Date has been updated "+row+" changes made.");
+	}
 	}
 
 

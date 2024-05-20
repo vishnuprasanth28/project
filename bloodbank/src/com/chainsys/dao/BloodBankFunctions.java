@@ -1,4 +1,4 @@
-package com.chainsys.DAO;
+package com.chainsys.dao;
 
 import java.sql.SQLException;
 
